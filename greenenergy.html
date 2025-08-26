@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Footprint Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f9f0;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    .hh {
+      text-align: center;
+      color: #2e7d32;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #1b5e20;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #e8f5e9;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="hh"> Carbon Footprint Calculator </h1>
+
+  <label>Weekly car travel (in km):</label>
+  <input type="number" id="car" placeholder="e.g. 50">
+
+  <label>Monthly electricity use (kWh):</label>
+  <input type="number" id="electricity" placeholder="e.g. 200">
+
+  <label>Flights per year (short flights under 3 hrs):</label>
+  <input type="number" id="flights" placeholder="e.g. 2">
+
+  <label>Beef meals per week:</label>
+  <input type="number" id="beef" placeholder="e.g. 3">
+
+  <label>Monthly waste (kg):</label>
+  <input type="number" id="waste" placeholder="e.g. 20">
+
+  <button onclick="calculateFootprint()">Calculate</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function calculateFootprint() {
+      // Input values
+      let car = parseFloat(document.getElementById("car").value) || 0;
+      let electricity = parseFloat(document.getElementById("electricity").value) || 0;
+      let flights = parseFloat(document.getElementById("flights").value) || 0;
+      let beef = parseFloat(document.getElementById("beef").value) || 0;
+      let waste = parseFloat(document.getElementById("waste").value) || 0;
+
+      // Emission factors
+      const EF_CAR = 0.21;        // kg CO2 per km
+      const EF_ELECTRICITY = 0.82; // kg CO2 per kWh
+      const EF_FLIGHT = 250;      // kg CO2 per short flight
+      const EF_BEEF = 5.4;        // kg CO2 per beef meal
+      const EF_WASTE = 1.9;       // kg CO2 per kg waste
+
+      // Yearly emissions
+      let car_emissions = car * 52 * EF_CAR;
+      let electricity_emissions = electricity * 12 * EF_ELECTRICITY;
+      let flight_emissions = flights * EF_FLIGHT;
+      let beef_emissions = beef * 52 * EF_BEEF;
+      let waste_emissions = waste * 12 * EF_WASTE;
+
+      let total = car_emissions + electricity_emissions + flight_emissions + beef_emissions + waste_emissions;
+
+      // World average (tonnes CO2 per person per year)
+      const avg = 4.5;
+
+      // Display results
+      let resultHTML = `
+        <h2>Your Annual Carbon Footprint</h2>
+        <p>🚗 Car Travel: ${car_emissions.toFixed(2)} kg CO₂</p>
+        <p>⚡ Electricity: ${electricity_emissions.toFixed(2)} kg CO₂</p>
+        <p>✈ Flights: ${flight_emissions.toFixed(2)} kg CO₂</p>
+        <p>🥩 Beef Diet: ${beef_emissions.toFixed(2)} kg CO₂</p>
+        <p>🗑 Waste: ${waste_emissions.toFixed(2)} kg CO₂</p>
+        <hr>
+        <h3>🌍 Total: ${(total / 1000).toFixed(2)} tonnes CO₂ per year</h3>
+      `;
+
+      if (total / 1000 > avg) {
+        resultHTML += <p>⚠ Your footprint is above the world average (4.5 tCO₂). Try reducing it!</p>;
+      } else {
+        resultHTML += <p>✅ Great! Your footprint is below the world average.</p>;
+      }
+
+      document.getElementById("result").innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
